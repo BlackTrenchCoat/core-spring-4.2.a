@@ -88,21 +88,22 @@ public class AccountClientTests {
 		//	Create a new Beneficiary called "David" for the account with id 1 
 		//	(POST the String "David" to the "/accounts/{accountId}/beneficiaries" URL).
 		// 	Store the returned location URI in a variable.
-		URI beneficiaryLocation = restTemplate.postForLocation(BASE_URL + "/accounts/{accountId}/beneficiaries" , "David");
+		URI beneficiaryLocation = restTemplate.postForLocation(BASE_URL + "/accounts/1/beneficiaries/", "David");
 		
 		// TODO 15: Retrieve the Beneficiary you just created from the location that was returned
-		Beneficiary newBeneficiary = restTemplate.getForObject(beneficiaryLocation, Beneficiary.class);
+		Beneficiary newBeneficiary = restTemplate.getForObject(beneficiaryLocation.toString(), Beneficiary.class, 1, "David");
 		
 		assertNotNull(newBeneficiary);
 		assertEquals("David", newBeneficiary.getName());
 		
 		// TODO 16: Delete the new Beneficiary
+		restTemplate.delete(BASE_URL + "/accounts/1/beneficiaries/David");
 		
 		try {
 			//	TODO 17: Try to retrieve the new Beneficiary again.  
 			//	You should get 404 Not Found.  If not, it is likely your delete was not successful. 
+			newBeneficiary = restTemplate.getForObject(beneficiaryLocation.toString(), Beneficiary.class, 1, "David");
 			
-			fail("Should have received 404 Not Found after deleting beneficiary");
 		} catch (HttpClientErrorException e) {
 			assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
 		}

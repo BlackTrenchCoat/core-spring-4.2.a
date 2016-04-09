@@ -101,6 +101,7 @@ public class AccountController {
 	@RequestMapping(value="/accounts/{accountId}/beneficiaries/{beneficiaryName}", method=RequestMethod.GET)
 	public @ResponseBody Beneficiary getBeneficiary(@PathVariable("accountId") int accountId, 
 			                                        @PathVariable("beneficiaryName") String beneficiaryName) {
+		logger.info("*** In getBeneficiary, accountId = " + accountId + ", beneficiaryName = '" + beneficiaryName + "'");
 		return retrieveAccount(accountId).getBeneficiary(beneficiaryName);
 	}
 
@@ -114,13 +115,17 @@ public class AccountController {
 	@RequestMapping(value="/accounts/{accountId}/beneficiaries", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public HttpEntity<String> addBeneficiary(
-			long accountId, 
+			@PathVariable("accountId") long accountId, 
 			@RequestBody String beneficiaryName,
 			@Value("#{request.requestURL}") StringBuffer url) {
+		logger.info("*** In addBeneficiary, accountId = " + accountId + ", beneficiaryName = '" + beneficiaryName + "'");
 		accountManager.addBeneficiary(accountId, beneficiaryName);
 		//	TODO 12: Set the Location header on the Response to the location of the created beneficiary.
 		//	Note the existing entityWithLocation method above, we used it in an earlier step.
-		return entityWithLocation(url, retrieveAccount(accountId).getBeneficiary(beneficiaryName));
+		Beneficiary beneficiary = retrieveAccount(accountId).getBeneficiary(beneficiaryName);
+		logger.info("*** beneficiary = " + beneficiary);
+		logger.info("*** addBeneficiary returning...");
+		return entityWithLocation(url, beneficiary.getName());
 	}
 	
 	/**
@@ -131,8 +136,9 @@ public class AccountController {
 	//          with a 204 No Content status
 	@RequestMapping(value="/accounts/{accountId}/beneficiaries/{beneficiaryName}", method=RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void removeBeneficiary(long accountId, 
-			                      String beneficiaryName) {
+	public void removeBeneficiary(@PathVariable("accountId") long accountId, 
+			                      @PathVariable("beneficiaryName") String beneficiaryName) {
+		logger.info("*** In removeBeneficiary, accountId = " + accountId + ", beneficiaryName = '" + beneficiaryName + "'");
 		Account account = accountManager.getAccount(accountId);
 		Beneficiary b = account.getBeneficiary(beneficiaryName);
 
