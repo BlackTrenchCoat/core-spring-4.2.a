@@ -33,6 +33,8 @@ import accounts.internal.JpaAccountManager;
 
 // This annotation gets Spring Boot to configure where JPA looks for Entities
 @EntityScan("rewards")
+@SpringBootApplication
+@EnableDiscoveryClient
 public class AccountsMicroservice {
 
 	protected Logger logger = Logger.getLogger(AccountsMicroservice.class

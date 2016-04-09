@@ -2,8 +2,6 @@ package microservices.registration;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
@@ -13,6 +11,8 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
  */
 // TODO-01: Add annotations to make this a Eureka server using Spring Boot
 //          Ignore any httpMapperProperties deprecated warning
+@SpringBootApplication
+@EnableEurekaServer
 public class RegistrationServer {
 
 	/**
@@ -25,8 +25,11 @@ public class RegistrationServer {
 		// TODO-02: Tell server to look for registration-server.properties - see
 		//          detailed instructions if you don't know how to do this.
 
+		System.setProperty("spring.config.name", "registration-server");
+
 		// TODO-03: Make this run as a Spring Application
 		
+		SpringApplication.run(RegistrationServer.class, args);
 
 		// TODO-04: Run this as a Spring Boot application by doing
 		//               right-click -> Run As -> Spring Boot App 
