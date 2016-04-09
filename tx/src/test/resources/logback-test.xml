@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML>
+
+<configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%-5p: %logger{40} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Application logger -->
+	<logger name="rewards">
+		<level value="info" />
+	</logger>
+	
+	<!--  Spring loggers -->
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.boot">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.context">
+		<level value="debug" />
+	</logger>
+
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.jdbc">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.aop">
+		<level value="warn" />
+	</logger>
+
+	<logger name="org.springframework.transaction">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<level value="debug" />
+	</logger>
+	
+	<!-- Third party Loggers -->
+	<logger name="org.hibernate">
+		<level value="info" />
+	</logger>
+	
+	<!-- Root Logger -->
+	<root level="warn">
+		<appender-ref ref="STDOUT" />
+	</root>
+	
+</configuration>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appender -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%-5p: %logger{45} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Application logger -->
+	<logger name="accounts">
+		<level value="info" />
+	</logger>
+
+	<!--  Spring loggers -->
+	<logger name="org.springframework.beans">
+		<level value="warn" />
+	</logger>
+	
+	<logger name="org.springframework.jdbc">
+		<level value="warn" />
+	</logger>
+
+	<logger name="org.springframework.transaction">
+		<level value="warn" />
+	</logger>
+
+	<logger name="org.springframework.orm">
+		<level value="warn" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="warn" />
+	</logger>
+
+	<logger name="org.springframework.security">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<level value="debug" />
+	</logger>
+	
+	<logger name="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<level value="debug" />
+	</logger>
+
+	<!-- Third party Loggers -->
+	<logger name="org.hibernate">
+		<level value="warn" />
+	</logger>
+
+	<logger name="org.jboss">
+		<level value="warn" />
+	</logger>
+	
+	<!-- Root Logger -->
+	<root>
+		<priority value="warn" />
+		<appender-ref ref="console" />
+	</root>
+	
+</configuration>

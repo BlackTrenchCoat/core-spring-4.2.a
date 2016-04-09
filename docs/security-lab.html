@@ -1,0 +1,175 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Chapter&nbsp;12.&nbsp;security: Securing the Web Tier</title><link rel="stylesheet" href="css/html.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.70.0"><link rel="start" href="index.html" title="Core Spring - Lab Documentation"><link rel="up" href="index.html" title="Core Spring - Lab Documentation"><link rel="prev" href="spring-boot.html" title="Chapter&nbsp;11.&nbsp;spring-boot: Creating a Web Application using Spring Boot&#xA;  "><link rel="next" href="rest-ws-lab.html" title="Chapter&nbsp;13.&nbsp;rest-ws: Building RESTful applications with Spring MVC"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="background-color:white;border:none;height:73px;border:1px solid black;"><a style="border:none;" href="http://www.pivotal.io" title="Pivotal"><img style="border:none;" src="images/heading-logo-lhs.jpg"></img></a><a style="border:none;" href="http://www.spring.io" title="The Spring Framework"><img style="border:none;position:absolute;padding-top:5px;right:42px;" src="images/heading-logo-rhs.jpg"></img></a></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="security-lab"></a>Chapter&nbsp;12.&nbsp;security: Securing the Web Tier</h2></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="security-1-lab-introduction"></a>12.1.&nbsp;Introduction</h2></div></div></div><p>In this lab you will gain experience with Spring Security. You will
+    enable security in the web-tier, and
+    you will establish role-based access rules for different resources. Then
+    you will specify some users along with their roles and manage the login
+    and "access denied" behavior of the application. Finally you will see how
+    to hide links and/or information from users based on their roles.</p><div class="orderedlist"><p class="title"><b>What you will learn:</b></p><ol type="1"><li><p>How to define role-based access rules for web resources</p></li><li><p>How to provide users and roles to the security
+        infrastructure</p></li><li><p>How to control login and logout behavior</p></li><li><p>How to display information or links based on role</p></li></ol></div><p>Estimated time to complete: 45 minutes</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="security-1-lab-quick-instructions"></a>12.2.&nbsp;Quick Instructions</h2></div></div></div><p>Quick instructions for this exercise have been embedded within the lab materials
+    in the form of TODO comments.  To display them, open the <code class="literal">Tasks</code> view 
+    (Window -&gt; Show view -&gt; Tasks (<span class="emphasis"><em>not Task List</em></span>)).</p><p>Occasionally, TODO'S defined within XML files may fail to appear in 
+    the <code class="literal">Tasks</code> view (i.e. gaps in the number sequence).  To correct this, 
+    go to <code class="literal">Preferences -&gt; General -&gt; Editors -&gt; Structured Text Editor -&gt; Task Tags</code>
+    pane.  Check <code class="literal">Enable searching for Task Tags</code> and click <code class="literal">Clean and Redetect Tasks</code>.
+    On the <code class="literal">Filters</code> tab, ensure XML content type is checked.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="security-1-lab-instructions"></a>12.3.&nbsp;Detailed Instructions</h2></div></div></div><p>The instructions for this lab are organized into five sections. In
+    the first section, you'll use Spring Security to protect part of the web
+    application. In the second section, you will manage login and "access denied" scenarios.
+    In the third section, you will handle unsuccessful attempts to log in. In the fourth section, you will 
+	configure some additional users and roles and experiment with different role-based access rules. In the final section,
+    you will use the security tag library to display links and data based on
+    role.</p><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4295"></a>12.3.1.&nbsp;Setting up Spring Security in the application</h3></div></div></div><p>Currently, the Reward Network web application allows any user to not only view Account information, but also to edit Account
+      information.  Of course, in a typical application, certain roles would most likely be required for those actions. The first step
+      in enforcing such role-based access is to intercept the requests corresponding to those actions. Spring Security utilizes standard
+      <span class="emphasis"><em>Servlet Filters</em></span> to make that possible.</p><p>(TODO-01) Begin by starting the application for 
+        this project and navigate to the home page at 
+        <a href="http://localhost:8080/" target="_top">http://localhost:8080/</a>.
+        This is a Spring Boot application so run by doing right click -&gt; Run As  -&gt; Spring Boot App.
+        You should see a link to 'View Account List' - click on this link and the list of accounts
+        should appear.  Be sure the application starts successfully before moving on to the next step.  
+        You may need to stop any application that could be already running.
+        If the application will not run, ask your instructor now for help.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="details.filter-setup"></a>12.3.2.&nbsp;Enable Spring Security</h3></div></div></div><p>(TODO-02) Remove the statement as indicated in the TODO. Spring Boot will automatically enable Spring
+        Security for us. We explicitly disabled the Spring Security auto-configuration in the first TODO, that's why
+        we managed to access the application in the first place. If we use Spring Boot auto-configuration, it
+        will detect Spring Security on the classpath and protect the whole application. As soon as we'll set up
+        our own security configuration, it will override Spring Boot's default auto-configuration.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="details.configure-security"></a>12.3.3.&nbsp;Include Security Configuration</h3></div></div></div><p>(TODO-03) Next, import the bean configuration class containing the
+        security configuration into the <code class="classname">SecurityApplication</code> class.  
+        (The name of the class is <code class="classname">SecurityConfig</code> and is located
+        in the config package).
+        This will include those beans when bootstrapping the application context.</p><p>At this point, Spring Security should be fully enabled and ready
+        to intercept incoming requests. Save all work, restart the application and 
+        navigate to the home page at <a href="http://localhost:8080/" target="_top">http://localhost:8080/</a>.
+        You should see a link to 'View Account List' - click on this link.
+        If your filter is configured correctly, then you
+        <span class="emphasis"><em>should</em></span> get a 404 response.</p><p>This happens because
+        the resource mapped to <code class="literal">/accounts/accountList.htm</code> is
+        secured and you have not configured a real login page yet.  The
+        <code class="classname">SecurityConfig</code> class currently specifies
+        <code class="literal">loginPage("/TODO-03")</code> and there is no such page as
+        <code class="literal">TODO-03</code>.</p><!--NEW FIGURE DIV--><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="text-align: center"><div xmlns="" class="figure"><a name="details.accessing-secured-resource"></a><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/3.1.2.png" align="middle" alt="Accessing Secured Resource"></div></div><p class="title"><b>Figure&nbsp;12.1.&nbsp;Accessing Secured Resource</b></p></div><br xmlns="" class="figure-break"></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4352"></a>12.3.4.&nbsp;Configuring Authentication</h3></div></div></div><p>In this section you'll use Java Configuration to configure
+      a login form for our application.</p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.login-page"></a>12.3.4.1.&nbsp;Specify the Login Page</h4></div></div></div><p>(TODO-04)  Open the <code class="classname">SecurityConfig</code> class. Notice that the
+        actual security constraints are defined inside the method
+        <code class="methodname">configure(HttpSecurity http)</code>. In particular notice that the
+        <span class="emphasis"><em>EDITOR</em></span> role is required to access the
+        <code class="literal">accountList</code> page.</p><p>When we tried to access the restricted <code class="literal">accountList</code> page
+        the application tried to redirect us to a login page.  Time to configure one.</p><p>Back inside <code class="classname">SecurityConfig</code>, configure the login 
+        page to be <code class="literal">/accounts/login</code> by modifying the <code class="literal">loginPage()</code>
+        method under the <code class="literal">formLogin()</code> method.
+  	    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The login page <code class="literal">/login</code> needs to be accessible
+          to anyone, especially someone who has not logged in yet.  So we specify
+          <code class="methodname">permitAll()</code> to allow fully unrestricted access.
+          </p></td></tr></table></div><p>Set also the access denied page so it uses '/denied'.
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.valid-user"></a>12.3.4.2.&nbsp;Handling Login</h4></div></div></div><p>Save all work, restart the web application, and navigate to the home page at
+        <a href="http://localhost:8080/" target="_top">http://localhost:8080/</a>.
+        This time when you click the 'View Account List' it should redirect
+        you to the login form. </p><!--NEW FIGURE DIV--><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="text-align: center"><div xmlns="" class="figure"><a name="details.implementing-login-page"></a><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/3.2.2.png" align="middle" alt="Implementing Login Page"></div></div><p class="title"><b>Figure&nbsp;12.2.&nbsp;Implementing Login Page</b></p></div><br xmlns="" class="figure-break"></div><p>Try logging in with a random username and password such as username "foo"
+        and password "foo".  You should be returned to the login page with an error
+        message in red.  Notice the URL at the top of the page
+        <code class="literal">http://localhost:8080/login?error</code>.
+        By default a failed login redirects back to the login URL with the
+        <code class="literal">error</code> parameter defined. (You can customize this by
+        specifying <code class="code">formLogin().failureUrl("/some-url")</code>).
+	    </p><p>Open <code class="filename">login.jsp</code> under the <code class="literal">src/main/webapp/views/</code> folder. 
+        See how the test for <code class="literal">param.error</code> is used to display the
+        error message.  Notice that the default input field names are
+        <code class="literal">username</code> and <code class="literal">password</code> and that the
+        form action is to POST the form to itself.</p><!--NEW FIGURE DIV--><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="text-align: center"><div xmlns="" class="figure"><a name="details.handing-login-errors"></a><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/3.4.png" align="middle" alt="Handling Login Errors"></div></div><p class="title"><b>Figure&nbsp;12.3.&nbsp;Handling Login Errors</b></p></div><br xmlns="" class="figure-break"></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.access-denied"></a>12.3.4.3.&nbsp;Handling Denied Access</h4></div></div></div><p>(TODO-05) To determine a valid username/password combination, you can explore
+	    the authentication configuration (further down within <code class="classname">SecurityConfig</code> you will find the 
+        <code class="literal">configureGlobal()</code> method).  An in-memory authentication provider is being used. 
+        Notice that a single hard-coded user, password, and role have been setup to support testing.  </p><p>Try logging in using the user called <code class="literal">vince</code>.
+        You should see the access denied page.
+        </p><!--NEW FIGURE DIV--><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="text-align: center"><div xmlns="" class="figure"><a name="details.implementing-access-denied-page"></a><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/3.2.2.1.png" align="middle" alt="Implementing Access Denied Page"></div></div><p class="title"><b>Figure&nbsp;12.4.&nbsp;Implementing Access Denied Page</b></p></div><br xmlns="" class="figure-break"></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4474"></a>12.3.5.&nbsp;Managing Users and Roles</h3></div></div></div><p>(TODO 06) At the end of the previous section, vince could login, but was denied
+        access to the list of accounts. 
+        In this section, you will modify the access rules and define additional users.</p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.configure-role-access"></a>12.3.5.1.&nbsp;Configure Role-Based Access</h4></div></div></div><p>So far you have only been logging in as a user with the VIEWER
+        role, and you have been denied access to the account list. Perhaps
+        the restriction is too severe. To edit an account should require the
+        EDITOR role, but accessing the accountList and accountDetails views
+        should be available to a user with the VIEWER role.</p><p>Find the <code class="literal">authorizeRequests</code> method and modify the
+        rules for <code class="literal">/accounts/account*</code> to enable access for
+        viewers as well. </p><p>Save all work and restart the web application. Using the user <code class="literal">vince</code>, you should now be able to
+        access the account list and the account details. On the Account details page, click on 'Edit Account'. 
+        This link should send you to the 'Access Denied' 
+        page as <code class="literal">vince</code> does not have the EDITOR privileges.</p><!--NEW FIGURE DIV--><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="text-align: center"><div xmlns="" class="figure"><a name="details.configure-roles-vince"></a><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/3.3.1.png" align="middle" alt="Configure Role-Based Access for Vince"></div></div><p class="title"><b>Figure&nbsp;12.5.&nbsp;Configure Role-Based Access for Vince</b></p></div><br xmlns="" class="figure-break"></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.catch-all"></a>12.3.5.2.&nbsp;Add a catch all</h4></div></div></div><p>(TODO 07) Currently you secure URLs starting with <code class="literal">/accounts/edit</code> and <code class="literal">accounts/account</code> 
+        To get a more robust configuration, you should also enforce that people must at least be logged in to show anything else
+        starting with <code class="literal">/accounts/</code>.
+        </p><p>Log out by clicking on the 'log out' link. Then try to access 
+        <a href="http://localhost:8080/accounts/hidden" target="_top">http://localhost:8080/accounts/hidden</a>.
+	As you can see, this URL is currently not protected, but it should be.
+        </p><p>Inside <code class="filename">SecurityConfig</code> class, add another <code class="literal">antMatchers</code> element at the bottom 
+	of the list with the pattern <code class="literal">/accounts/**</code> which enforces that the user should be fully authenticated. 
+	Be sure to do this using the method that will permit all users to access.  Placing this entry at the end of the list causes 
+	the more specific entries to be evaluated first.</p><p>Save all work, restart the web application and check that attempts to access 
+	<a href="http://localhost:8080/accounts/hidden" target="_top">http://localhost:8080/accounts/hidden</a> 
+	result in the login page being displayed.
+        </p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.add-user"></a>12.3.5.3.&nbsp;Add a User</h4></div></div></div><p>(TODO 08) Notice that the account list page provides a <code class="literal">logout</code> link. Open
+        <code class="literal">accountList.jsp</code> within <code class="literal">WEB-INF/views</code> to see how it is implemented; by default Spring 
+        Security looks for a POST /logout request, which is implemented using Spring MVC form tag. </p><p>At this point, logging out doesn't help much since you only have one user defined. However, by adding a user with the
+        <code class="literal">EDITOR</code> role, then you should be able to login as that user and successfully edit the account.</p><p>Revisit the globalSecurity method and add a user called <code class="literal">edith</code> with the ROLE_EDITOR role.  To do this,
+        you will need to add an "and()" method on the end of the line that defines <code class="literal">vince</code>, then add <code class="literal">edith</code>
+        on the following line.  The lines will be structured similarly except the line defining vince will end with and(), and the line
+        defining edith will end with a ;.
+         </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Spring Security provides many out-of-the-box options for
+            <span class="emphasis"><em>where</em></span> and/or <span class="emphasis"><em>how</em></span> the
+            user details are stored. For development and testing, it is
+            convenient to use the in-memory option. Since there is a layer of
+            abstraction here, and since the authentication and authorization
+            processes are completely decoupled, the strategy can be modified
+            for other environments without impacting the rest of the
+            behavior.</p></td></tr></table></div><p>
+	</p><p>Save all work, restart the web application, log in with the user <code class="literal">edith</code>.  Navigate to the edit page by
+	selecting an account from the account list and using the "Edit account" link on the details page.   
+        This time you should be able to access the <code class="literal">editAccount</code> page. 
+	</p><p>
+        Still, our goal is to allow those with ROLE_EDITOR to edit account details while disallowing other roles, so we need to ensure
+	that other users cannot access this page.  Logout of the application and login again as vince.  Repeat the navigation, but this
+	time we expect vince to be redirected to the access denied page.</p><!--NEW FIGURE DIV--><div xmlns="http://www.w3.org/TR/xhtml1/transitional" style="text-align: center"><div xmlns="" class="figure"><a name="details.configure-roles-edith"></a><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/3.3.2.png" align="middle" alt="Configure Role-Based Access foe Edith"></div></div><p class="title"><b>Figure&nbsp;12.6.&nbsp;Configure Role-Based Access foe Edith</b></p></div><br xmlns="" class="figure-break"></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4597"></a>12.3.6.&nbsp;Using the Security Tag Library</h3></div></div></div><p>Spring Security includes a JSP tag library to support common
+      view-related tasks while still promoting the best practice of
+      scriptlet-free JSPs.</p><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.hide-link"></a>12.3.6.1.&nbsp;Hide a Link Based on Role</h4></div></div></div><p>(TODO-09) A fairly common requirement for web-tier security is to only
+        display certain information and/or links to users with a specified
+        role. For example, you could hide the 'Edit Account' link unless a
+        user would be able to access that page. This provides a much better
+        user experience than constantly being redirected to the access denied
+        page.</p><p>Open <code class="literal">accountDetails.jsp</code> and find the link for
+        <code class="literal">editAccount.htm</code>. Surround that link within the body
+        of an <code class="literal">&lt;security:authorize&gt;</code> tag. Then, see if you can
+        determine what attribute of that tag to use in order to hide its
+        contents. </p><p>Save your work (restart not needed for JSP pages) and revisit 
+	the account details view (you should not need to restart 
+        your application). If you are currently logged in
+        as an editor you should still see the link. On the other hand, if you
+        are logged in as a viewer, you should not see the link. Try logging in
+        as a user with and without the editor role and verify that you see the
+        correct behavior.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="details.hide-information"></a>12.3.6.2.&nbsp;Hide Information Based on Role</h4></div></div></div><p>(TODO-10) Apply the same procedure to the table within
+        the account details view that lists the beneficiary information. 
+        However, this time a viewer should be able to see the contents of
+        the table while a non-viewer should only see the account number and
+        name. It is quite common to encounter requirements for hiding detailed
+        information from another user even if that user has more access
+        privileges.</p><p>The interesting thing about this requirement is that an editor
+        who is also a viewer will be able to view the beneficiary information,
+        but an editor who is <span class="emphasis"><em>not</em></span> a viewer  will not be
+        able to view the beneficiary information. After adding the necessary
+        tag, verify that this is indeed the case. </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>Notice the other available attributes on the 
+			<code class="literal">&lt;security:authorize/&gt;</code> tag. Feel free to apply the tag to other
+            data and/or other JSPs. As you have seen, it's also trivial to
+            define additional users and roles in order to have more
+            options.</p></td></tr></table></div></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="details.sha-256-encoding"></a>12.3.7.&nbsp;Bonus question: SHA-256 encoding </h3></div></div></div><p>Even though your application's security has dramatically improved, you still 
+ have plain-text passwords. This point will be 
+ improved using SHA-256 encoding.
+ </p><p>(TODO-11) Open <code class="literal">SecurityConfig</code> file and declare sha-256 encoding. 
+ embed a method call to  <code class="literal">.passwordEncoder(new StandardPasswordEncoder())</code> in the chain before
+ the users are defined.  Now, passwords need to be encoded, note the encrypted values are already provided for you
+ in the comment.  Change the plain-text passwords into sha-256-encoded ones.  You will not need to setup any salt source.
+ </p><p>Save all work, restart the web application and try logging in again. 
+  It should work in the same way as before. Your application is now using password encoding.</p><p>Note that the encoded password is based on SHA-256 with a random salt value introduced by the StandardPasswordEncoder,
+ and actually includes the generated salt value in the first few bytes (8) of the encoded value.  Although SHA-256 encoders are 
+ available in various websites, the easiest way to generate passwords loaded with this salt is to 
+ use (new StandardPasswordEncoder()).encode("thePassword")</p><p>If you see the behavior as described, then you have completed this lab. Congratulations!</p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>
+  Normally there is no way to get back the password from a sha-256 hash, at least not with 
+  mathematics, but in the Internet you will find so called Rainbow Tables which are
+  lookup tables for pre-generated hash/plaintext values. Sometimes you can even enter
+  the hash value in google and get back the plaintext. By appending a salt to the user
+  password before the hash is calculated this attack is more difficult, often infeasible.
+  In real life we would recommend to append a salt to the user password.
+ 		</p></td></tr></table></div></div></div></div><div xmlns="http://www.w3.org/TR/xhtml1/transitional" class="navfooter"><hr></hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-boot.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="rest-ws-lab.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;11.&nbsp;spring-boot: Creating a Web Application using Spring Boot
+  &nbsp;</td><td width="20%" align="center"><span style="color:white;font-size:90%;"><a href="http://www.spring.io" title="The Spring Framework">Spring By Pivotal</a></span></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;13.&nbsp;rest-ws: Building RESTful applications with Spring MVC</td></tr></table></div></body></html>
