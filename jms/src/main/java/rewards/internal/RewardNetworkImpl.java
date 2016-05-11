@@ -50,7 +50,7 @@ public class RewardNetworkImpl implements RewardNetwork {
 	//	(Hint: Use the queue names you provided, not the IDs of the beans).	
 	
 	@JmsListener(destination="dining.queue")
-	@SendTo("confirmation.queue")
+	@SendTo(value="confirmation.queue")
 	@Transactional
 	public RewardConfirmation rewardAccountFor(Dining dining) {
 		Account account = accountRepository.findByCreditCard(dining.getCreditCardNumber());

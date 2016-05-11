@@ -21,6 +21,7 @@ public class ClientConfig {
 	@Autowired
 	public DiningBatchProcessor diningBatchProcessor(JmsTemplate jmsTemplate) {
 		JmsDiningBatchProcessor processor = new JmsDiningBatchProcessor();
+		processor.setJmsTemplate(jmsTemplate);
 		return processor;
 	}
 

@@ -2,10 +2,6 @@ package rewards.jms.client;
 
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jms.core.JmsTemplate;
 
 import rewards.Dining;

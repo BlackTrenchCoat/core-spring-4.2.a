@@ -62,12 +62,13 @@ public class DiningBatchProcessorTests {
 		// TODO-10: Remove the @Ignore annotation at the top of this method.
 		//	Invoke the DiningBatchProcessor to send dining list via JMS.
 
+		diningBatchProcessor.processBatch(batch);
 		waitForBatch(batch.size(), 1000);
 
 		// TODO-11: Assert that the confirmation logger has received the entire batch.
 		// Run DiningBatchProcessorTests class after making the changes.  It should pass.
 		
-//		assertEquals(batch.size(), confirmationLogger.getConfirmations().size());
+		assertEquals(batch.size(), confirmationLogger.getConfirmations().size());
 
 	}
 
