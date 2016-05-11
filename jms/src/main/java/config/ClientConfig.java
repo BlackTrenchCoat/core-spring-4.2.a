@@ -1,6 +1,7 @@
 package config;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ public class ClientConfig {
 	@Autowired ConnectionFactory connectionFactory;
 	
 	@Bean
+	@Autowired
 	public DiningBatchProcessor diningBatchProcessor(JmsTemplate jmsTemplate) {
 		JmsDiningBatchProcessor processor = new JmsDiningBatchProcessor();
 		return processor;
@@ -26,7 +28,15 @@ public class ClientConfig {
 	//	Provide it with a reference to the ConnectionFactory and the dining destination. 
 	//	Inject it into the batch processor bean (above). 
 	
-
+	@Autowired
+	Destination diningQueue;
+	
+	@Bean 
+	public JmsTemplate jmsTemplate() {
+		JmsTemplate result = new JmsTemplate(connectionFactory);
+		result.setDefaultDestination(diningQueue);
+		return result;
+	}
 	
 	/**
 	 *	Create an object that knows how to log dining confirmations: 

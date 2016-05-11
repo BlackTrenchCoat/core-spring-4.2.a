@@ -1,5 +1,7 @@
 package rewards.jms.client;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,6 @@ public class DiningBatchProcessorTests {
 	private RewardConfirmationLogger confirmationLogger;
 
 	@Test
-	@Ignore
 	public void testBatch() throws Exception {
 		Dining dining1 = Dining.createDining("80.93", "1234123412341234", "1234567890");
 		Dining dining2 = Dining.createDining("56.12", "1234123412341234", "1234567890");
@@ -65,6 +66,9 @@ public class DiningBatchProcessorTests {
 
 		// TODO-11: Assert that the confirmation logger has received the entire batch.
 		// Run DiningBatchProcessorTests class after making the changes.  It should pass.
+		
+//		assertEquals(batch.size(), confirmationLogger.getConfirmations().size());
+
 	}
 
 	private void waitForBatch(int batchSize, int timeout) throws InterruptedException {

@@ -4,6 +4,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 
+import common.money.MonetaryAmount;
 import rewards.AccountContribution;
 import rewards.Dining;
 import rewards.RewardConfirmation;
@@ -13,7 +14,6 @@ import rewards.internal.account.AccountRepository;
 import rewards.internal.restaurant.Restaurant;
 import rewards.internal.restaurant.RestaurantRepository;
 import rewards.internal.reward.RewardRepository;
-import common.money.MonetaryAmount;
 
 /**
  * Rewards an Account for Dining at a Restaurant.
@@ -49,6 +49,8 @@ public class RewardNetworkImpl implements RewardNetwork {
 	//	Use a separate annotation to cause the return value to be sent to the confirmation queue.
 	//	(Hint: Use the queue names you provided, not the IDs of the beans).	
 	
+	@JmsListener(destination="dining.queue")
+	@SendTo("confirmation.queue")
 	@Transactional
 	public RewardConfirmation rewardAccountFor(Dining dining) {
 		Account account = accountRepository.findByCreditCard(dining.getCreditCardNumber());

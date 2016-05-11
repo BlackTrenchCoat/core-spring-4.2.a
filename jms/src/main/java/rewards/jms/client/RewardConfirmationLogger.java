@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.jms.annotation.JmsListener;
 
 import rewards.RewardConfirmation;
 
@@ -21,6 +22,7 @@ public class RewardConfirmationLogger {
 	//	Set the destination to the confirmation queue name defined earlier.
 	//	Note that unlike the last step, this method returns void, so no response destination is needed.
 	
+	@JmsListener(destination="confirmation.queue")
 	public void log(RewardConfirmation rewardConfirmation) {
 		this.confirmations.add(rewardConfirmation);
 		if (logger.isInfoEnabled()) {
